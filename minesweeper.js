@@ -246,3 +246,36 @@ class Board {
     // }
   }
 }
+
+class Cell {
+  row = 0;
+  column = 0;
+  hasBomb = false;
+  isRevealed = false;
+  isFlagged = false;
+  adjacentCells = [];
+
+  constructor(row, column) {
+    this.row = row;
+    this.column = column;
+  }
+
+  get adjacentBombs() {
+    return this.adjacentCells.reduce(
+      (count, cell) => cell.hasBomb ? count + 1 : count, 0
+    );    
+  }
+}
+
+function createCell(x, y) {
+  return {
+    x,
+    y,
+    hasBomb: false,
+    flagged: false,
+    revealed: false,
+    adjacentBombs: 0,
+    adjacentCells: []
+  }
+}
+
