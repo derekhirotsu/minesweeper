@@ -1,53 +1,12 @@
-// const BOTTOM_LEFT = 1;
-// const BOTTOM_EDGE = 2;
-// const BOTTOM_RIGHT = 3;
-// const LEFT_EDGE = 4;
-// const CENTER = 5;
-// const RIGHT_EDGE = 6;
-// const TOP_LEFT = 7;
-// const TOP_EDGE = 8;
-// const TOP_RIGHT = 9;
-
 class Board {
   cells = [];
   bombs = 0;
-  // getCellPosition(cell, rows, columns) {
-  //   if (cell.row == rows - 1 && cell.column == 0) {
-  //     return BOTTOM_LEFT;
-  //   }
-
-  //   if (cell.row == rows - 1) {
-  //     return BOTTOM_EDGE;
-  //   } 
-
-  //   if (cell.row == rows - 1 && cell.column == columns - 1) {
-  //     return BOTTOM_RIGHT;
-  //   }
-
-  //   if (cell.column == 0) {
-  //     return LEFT_EDGE;
-  //   }
-
-  //   if (cell.column == columns - 1) {
-  //     return RIGHT_EDGE;
-  //   }
-
-  //   if (cell.row == 0 && cell.column == 0) {
-  //     return TOP_LEFT;
-  //   }
-
-  //   if (cell.row == 0) {
-  //     return TOP_EDGE
-  //   } 
-
-  //   if (cell.row == 0 && cell.column == columns - 1) {
-  //     return TOP_RIGHT;
-  //   }
-
-  //   return CENTER;
-  // }
+  rows = 0;
+  columns = 0;
 
   constructor(rows, columns, bombs) {
+    this.rows = rows;
+    this.columns = columns;
     this.bombs = bombs;
 
     this.createCells(rows, columns);
@@ -111,6 +70,7 @@ class Board {
     return this.cells[row][column];
   }
 
+  // edge case: 1x1 grid
   setAdjacentCells(cell, rows, columns) {
     if (cell.row == 0 && cell.column == 0) { // top left corner
       cell.adjacentCells = [
@@ -220,31 +180,6 @@ class Board {
       });
     }
   }
-
-
-  #validateBoard(rows, columns, bombs) {
-    // if (rows == 0) {
-    //   throw "Number of rows must be greater than 0.";
-    // }
-
-    // if (columns == 0) {
-    //   throw "Number of columns must be greater than 0.";
-    // }
-
-    // if (rows == 1 && columns == 1) {
-    //   throw "Grid must be larger than 1 x 1";
-    // }
-
-    // let maxBombs = (rows * columns) - 1;
-
-    // if (bombs == 0) {
-    //   throw "Must have at least 1 bomb.";
-    // }
-
-    // if (bombs > maxBombs) {
-    //   throw `Cannot have more than ${maxBombs} for a grid of size ${rows} x ${columns}`;
-    // }
-  }
 }
 
 class Cell {
@@ -267,15 +202,36 @@ class Cell {
   }
 }
 
-function createCell(x, y) {
-  return {
-    x,
-    y,
-    hasBomb: false,
-    flagged: false,
-    revealed: false,
-    adjacentBombs: 0,
-    adjacentCells: []
+const container = document.getElementById("container");
+
+function initGame() {
+  let b = new Board(3, 3, 1);
+
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      const cell = document.createElement("div");
+      cell.dataset.row = i;
+      cell.dataset.column = j;
+      cell.className = "cell";
+      container.appendChild(cell);
+      // cell.addEventListener("click", () => {
+      //   b.selectCell(i, j);
+      //   cell.innerText = b.getCell(i, j).adjacentBombs;
+      // });
+    }
+  }
+
+  for(let i = 0; i < container.children.length; i++) {
+    let child = container.children[i];
+    child.addEventListener("click", () => {
+      b.selectCell(child.dataset.row, child.dataset.column);
+
+      b.cells.flat().forEach(cell => {
+        if (cell.isRevealed) {
+          let test = container.querySelector(`[data-row="${cell.row}"][data-column="${cell.column}"]`);
+          test.innerText = cell.adjacentBombs;
+        }
+      })
+    })
   }
 }
-
